@@ -2,53 +2,53 @@ package Servlet;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Hashtable;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.JSONObject;
+
+import parse.JsonArrayListGenerator;
+import parse.JsonProcess;
+import parse.Parse;
+import beans.Event;
+import beans.Preference;
+
 import com.google.gson.Gson;
 
-import parse.Parse;
-import workPool.WorkPool;
-import beans.Activity;
-import beans.Location;
-import database.Database;
-
 /**
- * Servlet implementation class Center
+ * Servlet implementation class LookUpPreference
  */
-public class Center extends HttpServlet {
+public class LookUpPreference extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	public static WorkPool wp;
-	public static Database db;
-	public static Hashtable<Integer,Location> locationInfo = new Hashtable<Integer,Location>();
-	static{
-		db=new Database();
-		wp=new WorkPool();
-		wp.start();
-	}
+       
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public Center(){
+    public LookUpPreference() {
         super();
-        //db.register("zhangluoma", "shkdshdksh");
         // TODO Auto-generated constructor stub
     }
+
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-	
+		// TODO Auto-generated method stub
 	}
+
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		
+		String receivedData = Parse.getPostData(request);
+		JSONObject jo = JsonProcess.getJason(receivedData);
+		String userId = jo.getString("user_id");
+		ArrayList<Preference> result = Center.db.getPreferenceFromUserId(userId);
+		JsonProcess.sendJson(response,new JsonArrayListGenerator<Preference>(result).getObject());
 	}
+
 }

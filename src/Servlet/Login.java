@@ -1,54 +1,52 @@
 package Servlet;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Hashtable;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.google.gson.Gson;
+import org.json.JSONObject;
 
+import parse.JsonProcess;
 import parse.Parse;
-import workPool.WorkPool;
-import beans.Activity;
-import beans.Location;
-import database.Database;
 
 /**
- * Servlet implementation class Center
+ * Servlet implementation class Login
  */
-public class Center extends HttpServlet {
+public class Login extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	public static WorkPool wp;
-	public static Database db;
-	public static Hashtable<Integer,Location> locationInfo = new Hashtable<Integer,Location>();
-	static{
-		db=new Database();
-		wp=new WorkPool();
-		wp.start();
-	}
+       
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public Center(){
+    public Login() {
         super();
-        //db.register("zhangluoma", "shkdshdksh");
         // TODO Auto-generated constructor stub
     }
+
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-	
+		// TODO Auto-generated method stub
+		
 	}
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		
+		System.out.println("login!!");
+		String text = Parse.getPostData(request);
+		System.out.println(text);
+		JSONObject input = JsonProcess.getJason(text);
+		String u = input.getString("username");
+		String p = input.getString("password");
+		boolean result = Center.db.login(u,p);
+		JSONObject output = new JSONObject();
+		output.put("result",result);
+		JsonProcess.sendJson(response,output);
 	}
 }
